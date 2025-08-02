@@ -7,5 +7,5 @@
   "iot_class": "local_polling",
   "requirements": ["pyinteno==0.1.1"],
   "version": "0.1.1",
-  "issue_tracker": "https://github.com/nielstron/pyinteno/issues",
+  "issue_tracker": "https://github.com/nielstron/pyinteno/issues"
 }
