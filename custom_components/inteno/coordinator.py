@@ -61,7 +61,7 @@ class IntenoData:
 
     async def get_list(self) -> dict[str, IntenoDevice]:
         """Get devices from interface."""
-        await self.api.ensure_logged_in(force_reconnect=True)
+        await self.api.ensure_logged_in()
         if result := await self.api.list_devices():
             return self.load_mac(result)
         return {}
