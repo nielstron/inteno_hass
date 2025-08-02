@@ -1,4 +1,4 @@
-"""Support for Mikrotik routers as device tracker."""
+"""Support for Inteno routers as device tracker."""
 
 from __future__ import annotations
 
@@ -10,22 +10,21 @@ from homeassistant.components.device_tracker import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
-from .coordinator import Device, MikrotikConfigEntry, MikrotikDataUpdateCoordinator
+from .coordinator import Device, IntenoConfigEntry, IntenoDataUpdateCoordinator
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    config_entry: MikrotikConfigEntry,
+    config_entry: IntenoConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Set up device tracker for Mikrotik component."""
+    """Set up device tracker for Inteno component."""
     coordinator = config_entry.runtime_data
 
-    tracked: dict[str, MikrotikDataUpdateCoordinatorTracker] = {}
+    tracked: dict[str, IntenoDataUpdateCoordinatorTracker] = {}
 
     registry = er.async_get(hass)
 
@@ -53,27 +52,27 @@ async def async_setup_entry(
 
 @callback
 def update_items(
-    coordinator: MikrotikDataUpdateCoordinator,
+    coordinator: IntenoDataUpdateCoordinator,
     async_add_entities: AddConfigEntryEntitiesCallback,
-    tracked: dict[str, MikrotikDataUpdateCoordinatorTracker],
+    tracked: dict[str, IntenoDataUpdateCoordinatorTracker],
 ) -> None:
     """Update tracked device state from the hub."""
-    new_tracked: list[MikrotikDataUpdateCoordinatorTracker] = []
+    new_tracked: list[IntenoDataUpdateCoordinatorTracker] = []
     for mac, device in coordinator.api.devices.items():
         if mac not in tracked:
-            tracked[mac] = MikrotikDataUpdateCoordinatorTracker(device, coordinator)
+            tracked[mac] = IntenoDataUpdateCoordinatorTracker(device, coordinator)
             new_tracked.append(tracked[mac])
 
     async_add_entities(new_tracked)
 
 
-class MikrotikDataUpdateCoordinatorTracker(
-    CoordinatorEntity[MikrotikDataUpdateCoordinator], ScannerEntity
+class IntenoDataUpdateCoordinatorTracker(
+    CoordinatorEntity[IntenoDataUpdateCoordinator], ScannerEntity
 ):
     """Representation of network device."""
 
     def __init__(
-        self, device: Device, coordinator: MikrotikDataUpdateCoordinator
+        self, device: Device, coordinator: IntenoDataUpdateCoordinator
     ) -> None:
         """Initialize the tracked device."""
         super().__init__(coordinator)

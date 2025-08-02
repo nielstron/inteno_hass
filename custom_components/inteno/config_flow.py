@@ -1,4 +1,4 @@
-"""Config flow for Mikrotik."""
+"""Config flow for Inteno."""
 
 from __future__ import annotations
 
@@ -18,16 +18,11 @@ from homeassistant.const import (
     CONF_PASSWORD,
     CONF_PORT,
     CONF_USERNAME,
-    CONF_VERIFY_SSL,
+    CONF_VERIFY_SSL, CONF_SCAN_INTERVAL,
 )
 from homeassistant.core import callback
 
 from .const import (
-    CONF_ARP_PING,
-    CONF_DETECTION_TIME,
-    CONF_FORCE_DHCP,
-    DEFAULT_API_PORT,
-    DEFAULT_DETECTION_TIME,
     DEFAULT_NAME,
     DOMAIN,
 )
@@ -35,8 +30,8 @@ from .coordinator import get_api
 from .errors import CannotConnect, LoginError
 
 
-class MikrotikFlowHandler(ConfigFlow, domain=DOMAIN):
-    """Handle a Mikrotik config flow."""
+class IntenoFlowHandler(ConfigFlow, domain=DOMAIN):
+    """Handle a Inteno config flow."""
 
     VERSION = 1
 
@@ -44,9 +39,9 @@ class MikrotikFlowHandler(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(
         config_entry: ConfigEntry,
-    ) -> MikrotikOptionsFlowHandler:
+    ) -> IntenoOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return MikrotikOptionsFlowHandler()
+        return IntenoOptionsFlowHandler()
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -57,7 +52,7 @@ class MikrotikFlowHandler(ConfigFlow, domain=DOMAIN):
             self._async_abort_entries_match({CONF_HOST: user_input[CONF_HOST]})
 
             try:
-                await self.hass.async_add_executor_job(get_api, user_input)
+                await get_api(user_input)
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except LoginError:
@@ -75,8 +70,8 @@ class MikrotikFlowHandler(ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_HOST): str,
                     vol.Required(CONF_USERNAME): str,
                     vol.Required(CONF_PASSWORD): str,
-                    vol.Optional(CONF_PORT, default=DEFAULT_API_PORT): int,
                     vol.Optional(CONF_VERIFY_SSL, default=False): bool,
+                    vol.Optional(CONF_SCAN_INTERVAL, default=60): int,
                 }
             ),
             errors=errors,
@@ -98,7 +93,7 @@ class MikrotikFlowHandler(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             user_input = {**reauth_entry.data, **user_input}
             try:
-                await self.hass.async_add_executor_job(get_api, user_input)
+                await get_api(user_input)
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except LoginError:
@@ -119,13 +114,13 @@ class MikrotikFlowHandler(ConfigFlow, domain=DOMAIN):
         )
 
 
-class MikrotikOptionsFlowHandler(OptionsFlow):
-    """Handle Mikrotik options."""
+class IntenoOptionsFlowHandler(OptionsFlow):
+    """Handle Inteno options."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Manage the Mikrotik options."""
+        """Manage the Inteno options."""
         return await self.async_step_device_tracker()
 
     async def async_step_device_tracker(
@@ -136,20 +131,6 @@ class MikrotikOptionsFlowHandler(OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
 
         options = {
-            vol.Optional(
-                CONF_FORCE_DHCP,
-                default=self.config_entry.options.get(CONF_FORCE_DHCP, False),
-            ): bool,
-            vol.Optional(
-                CONF_ARP_PING,
-                default=self.config_entry.options.get(CONF_ARP_PING, False),
-            ): bool,
-            vol.Optional(
-                CONF_DETECTION_TIME,
-                default=self.config_entry.options.get(
-                    CONF_DETECTION_TIME, DEFAULT_DETECTION_TIME
-                ),
-            ): int,
         }
 
         return self.async_show_form(

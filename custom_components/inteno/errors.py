@@ -1,4 +1,4 @@
-"""Errors for the Mikrotik component."""
+"""Errors for the Inteno component."""
 
 from homeassistant.exceptions import HomeAssistantError
 

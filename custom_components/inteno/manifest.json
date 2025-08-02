@@ -1,10 +1,9 @@
 {
-  "domain": "mikrotik",
-  "name": "Mikrotik",
-  "codeowners": ["@engrbm87"],
+  "domain": "inteno",
+  "name": "Inteno",
+  "codeowners": ["@nielstron"],
   "config_flow": true,
-  "documentation": "https://www.home-assistant.io/integrations/mikrotik",
+  "documentation": "https://github.com/nielstron/pyinteno",
   "iot_class": "local_polling",
-  "loggers": ["librouteros"],
-  "requirements": ["librouteros==3.2.0"]
+  "requirements": ["pyinteno==0.0.2"]
 }
