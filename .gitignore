@@ -1,3 +1,6 @@
+.DS_Store
+.idea
+test.py
 # artifacts
 __pycache__
 .pytest*
