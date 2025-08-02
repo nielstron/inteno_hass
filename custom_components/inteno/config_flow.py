@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
-
 from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
@@ -16,9 +14,9 @@ from homeassistant.config_entries import (
 from homeassistant.const import (
     CONF_HOST,
     CONF_PASSWORD,
-    CONF_PORT,
+    CONF_SCAN_INTERVAL,
     CONF_USERNAME,
-    CONF_VERIFY_SSL, CONF_SCAN_INTERVAL,
+    CONF_VERIFY_SSL,
 )
 from homeassistant.core import callback
 
@@ -28,6 +26,9 @@ from .const import (
 )
 from .coordinator import get_api
 from .errors import CannotConnect, LoginError
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 class IntenoFlowHandler(ConfigFlow, domain=DOMAIN):
@@ -41,7 +42,7 @@ class IntenoFlowHandler(ConfigFlow, domain=DOMAIN):
         config_entry: ConfigEntry,
     ) -> IntenoOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return IntenoOptionsFlowHandler()
+        return IntenoOptionsFlowHandler(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -81,7 +82,7 @@ class IntenoFlowHandler(ConfigFlow, domain=DOMAIN):
         self, entry_data: Mapping[str, Any]
     ) -> ConfigFlowResult:
         """Perform reauth upon an API authentication error."""
-        return await self.async_step_reauth_confirm()
+        return await self.async_step_reauth_confirm(entry_data)
 
     async def async_step_reauth_confirm(
         self, user_input: dict[str, str] | None = None
@@ -121,7 +122,7 @@ class IntenoOptionsFlowHandler(OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Manage the Inteno options."""
-        return await self.async_step_device_tracker()
+        return await self.async_step_device_tracker(user_input)
 
     async def async_step_device_tracker(
         self, user_input: dict[str, Any] | None = None
@@ -130,8 +131,7 @@ class IntenoOptionsFlowHandler(OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        options = {
-        }
+        options = {}
 
         return self.async_show_form(
             step_id="device_tracker", data_schema=vol.Schema(options)

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.device_tracker import (
     DOMAIN as DEVICE_TRACKER,
+)
+from homeassistant.components.device_tracker import (
     ScannerEntity,
 )
 from homeassistant.core import HomeAssistant, callback
@@ -14,6 +16,9 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
 from .coordinator import Device, IntenoConfigEntry, IntenoDataUpdateCoordinator
+
+if TYPE_CHECKING:
+    from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 
 async def async_setup_entry(
@@ -83,13 +88,11 @@ class IntenoDataUpdateCoordinatorTracker(
     @property
     def is_connected(self) -> bool:
         """Return true if the client is connected to the network."""
-        if (
+        return (
             self.device.last_seen
             and (dt_util.utcnow() - self.device.last_seen)
             < self.coordinator.option_detection_time
-        ):
-            return True
-        return False
+        )
 
     @property
     def hostname(self) -> str:

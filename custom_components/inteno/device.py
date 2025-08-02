@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Any
-
-from homeassistant.util import dt as dt_util, slugify
-
-from pyinteno import IntenoDevice
-from .const import ATTR_DEVICE_TRACKER
 from dataclasses import asdict
+from typing import TYPE_CHECKING, Any
+
+from homeassistant.util import dt as dt_util
+from homeassistant.util import slugify
+
+from .const import ATTR_DEVICE_TRACKER
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
+    from pyinteno import IntenoDevice
 
 
 class Device:
@@ -51,13 +55,14 @@ class Device:
                 self._attrs[slugify(attr)] = attr_data[attr]
         return self._attrs
 
-    def update(
+    def mark_seen(self) -> None:
+        """Mark the device as seen."""
+        self._last_seen = dt_util.utcnow()
+
+    def update_params(
         self,
         params: IntenoDevice | None = None,
-        active: bool = False,
     ) -> None:
         """Update Device params."""
         if params:
             self._params = params
-        if active:
-            self._last_seen = dt_util.utcnow()

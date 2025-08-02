@@ -2,32 +2,34 @@
 
 from __future__ import annotations
 
-from datetime import timedelta, datetime
 import logging
 import ssl
-from typing import Any
-
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, CONF_VERIFY_SSL, CONF_SCAN_INTERVAL
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from datetime import timedelta
+from typing import TYPE_CHECKING, Any
 
 import pyinteno
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import (
+    CONF_HOST,
+    CONF_PASSWORD,
+    CONF_SCAN_INTERVAL,
+    CONF_USERNAME,
+    CONF_VERIFY_SSL,
+)
+from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from pyinteno import IntenoDevice
+
 from .const import (
-    ARP,
-    CAPSMAN,
-    DHCP,
+    CONF_DETECTION_TIME,
+    DEFAULT_DETECTION_TIME,
     DOMAIN,
-    IDENTITY,
-    INFO,
-    NAME,
-    WIFI,
-    WIRELESS, CONF_DETECTION_TIME, DEFAULT_DETECTION_TIME,
 )
 from .device import Device
 from .errors import CannotConnect, LoginError
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -80,10 +82,13 @@ class IntenoData:
 
         for mac, params in self.all_devices.items():
             if mac not in self.devices:
-                self.devices[mac] = Device(mac, self.all_devices.get(mac, {}))
+                self.devices[mac] = Device(mac, params)
         for mac, device in self.devices.items():
             active = mac in self.all_devices and self.all_devices[mac].connected
-            self.devices[mac].update(active=active, params=self.all_devices.get(mac))
+            device.update_params(params=self.all_devices.get(mac))
+            if active:
+                device.mark_seen()
+
 
 class IntenoDataUpdateCoordinator(DataUpdateCoordinator[None]):
     """Inteno Hub Object."""
@@ -146,13 +151,13 @@ async def get_api(entry: dict[str, Any]) -> pyinteno.Inteno:
             entry[CONF_USERNAME],
             entry[CONF_PASSWORD],
         )
-        await api._login()
+        await api.ensure_logged_in()
     except (
         pyinteno.IntenoError,
         OSError,
         TimeoutError,
     ) as api_error:
-        _LOGGER.error("Inteno %s error: %s", entry[CONF_HOST], api_error)
+        _LOGGER.exception("Inteno %s error: %s", entry[CONF_HOST], exc_info=api_error)
         if "invalid user name or password" in str(api_error):
             raise LoginError from api_error
         raise CannotConnect from api_error
