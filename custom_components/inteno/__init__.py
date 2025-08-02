@@ -17,14 +17,14 @@ async def async_setup_entry(
 ) -> bool:
     """Set up the Inteno component."""
     try:
-        api = await hass.async_add_executor_job(get_api, dict(config_entry.data))
+        api = await get_api(dict(config_entry.data))
     except CannotConnect as api_error:
         raise ConfigEntryNotReady from api_error
     except LoginError as err:
         raise ConfigEntryAuthFailed from err
 
     coordinator = IntenoDataUpdateCoordinator(hass, config_entry, api)
-    await hass.async_add_executor_job(coordinator.api.get_hub_details)
+    spec = await coordinator.api.api.hardware_info()
     await coordinator.async_config_entry_first_refresh()
 
     config_entry.runtime_data = coordinator
@@ -34,11 +34,11 @@ async def async_setup_entry(
     device_registry = dr.async_get(hass)
     device_registry.async_get_or_create(
         config_entry_id=config_entry.entry_id,
-        connections={(DOMAIN, coordinator.serial_num)},
+        connections={(DOMAIN, spec.system.serialno)},
         manufacturer=ATTR_MANUFACTURER,
-        model=coordinator.model,
-        name=coordinator.hostname,
-        sw_version=coordinator.firmware,
+        model=spec.system.model,
+        name=spec.system.name,
+        sw_version=spec.system.firmware,
     )
 
     return True

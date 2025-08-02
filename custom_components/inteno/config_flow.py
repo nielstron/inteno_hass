@@ -39,10 +39,10 @@ class IntenoFlowHandler(ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(
-        config_entry: ConfigEntry,
+        _: ConfigEntry,
     ) -> IntenoOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return IntenoOptionsFlowHandler(config_entry)
+        return IntenoOptionsFlowHandler()
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -131,7 +131,9 @@ class IntenoOptionsFlowHandler(OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        options = {}
+        options = {
+            vol.Optional(CONF_SCAN_INTERVAL, default=60): int,
+        }
 
         return self.async_show_form(
             step_id="device_tracker", data_schema=vol.Schema(options)
