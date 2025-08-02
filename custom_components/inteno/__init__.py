@@ -7,7 +7,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .const import ATTR_MANUFACTURER, DOMAIN
 from .coordinator import IntenoConfigEntry, IntenoDataUpdateCoordinator, get_api
-from .errors import CannotConnect, LoginError
+from .errors import CannotConnectError, LoginError
 
 PLATFORMS = [Platform.DEVICE_TRACKER]
 
@@ -18,7 +18,7 @@ async def async_setup_entry(
     """Set up the Inteno component."""
     try:
         api = await get_api(dict(config_entry.data))
-    except CannotConnect as api_error:
+    except CannotConnectError as api_error:
         raise ConfigEntryNotReady from api_error
     except LoginError as err:
         raise ConfigEntryAuthFailed from err

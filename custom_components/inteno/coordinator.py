@@ -26,7 +26,7 @@ from .const import (
     DOMAIN,
 )
 from .device import Device
-from .errors import CannotConnect, LoginError
+from .errors import CannotConnectError, LoginError
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -75,7 +75,7 @@ class IntenoData:
         try:
             self.all_devices = await self.get_list()
 
-        except CannotConnect as err:
+        except CannotConnectError as err:
             raise UpdateFailed from err
         except LoginError as err:
             raise ConfigEntryAuthFailed from err
@@ -160,7 +160,7 @@ async def get_api(entry: dict[str, Any]) -> pyinteno.Inteno:
         _LOGGER.exception("Inteno %s error: %s", entry[CONF_HOST], exc_info=api_error)
         if "invalid user name or password" in str(api_error):
             raise LoginError from api_error
-        raise CannotConnect from api_error
+        raise CannotConnectError from api_error
 
     _LOGGER.debug("Connected to %s successfully", entry[CONF_HOST])
     return api

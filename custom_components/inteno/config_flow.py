@@ -23,7 +23,7 @@ from homeassistant.helpers.entity_component import DEFAULT_SCAN_INTERVAL
 
 from .const import CONF_DETECTION_TIME, DEFAULT_DETECTION_TIME, DEFAULT_NAME, DOMAIN
 from .coordinator import get_api
-from .errors import CannotConnect, LoginError
+from .errors import CannotConnectError, LoginError
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -52,7 +52,7 @@ class IntenoFlowHandler(ConfigFlow, domain=DOMAIN):
 
             try:
                 await get_api(user_input)
-            except CannotConnect:
+            except CannotConnectError:
                 errors["base"] = "cannot_connect"
             except LoginError:
                 errors[CONF_USERNAME] = "invalid_auth"
@@ -98,7 +98,7 @@ class IntenoFlowHandler(ConfigFlow, domain=DOMAIN):
             user_input = {**reauth_entry.data, **user_input}
             try:
                 await get_api(user_input)
-            except CannotConnect:
+            except CannotConnectError:
                 errors["base"] = "cannot_connect"
             except LoginError:
                 errors[CONF_PASSWORD] = "invalid_auth"

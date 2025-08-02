@@ -3,7 +3,7 @@
 from homeassistant.exceptions import HomeAssistantError
 
 
-class CannotConnect(HomeAssistantError):
+class CannotConnectError(HomeAssistantError):
     """Unable to connect to the hub."""
 
 
