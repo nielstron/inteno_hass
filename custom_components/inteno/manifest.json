@@ -5,7 +5,7 @@
   "config_flow": true,
   "documentation": "https://github.com/nielstron/pyinteno",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/nielstron/pyinteno/issues",
   "requirements": ["pyinteno==0.1.1"],
-  "version": "0.1.1",
-  "issue_tracker": "https://github.com/nielstron/pyinteno/issues"
+  "version": "0.1.1"
 }
