@@ -19,11 +19,9 @@ from homeassistant.const import (
     CONF_VERIFY_SSL,
 )
 from homeassistant.core import callback
+from homeassistant.helpers.entity_component import DEFAULT_SCAN_INTERVAL
 
-from .const import (
-    DEFAULT_NAME,
-    DOMAIN,
-)
+from .const import CONF_DETECTION_TIME, DEFAULT_DETECTION_TIME, DEFAULT_NAME, DOMAIN
 from .coordinator import get_api
 from .errors import CannotConnect, LoginError
 
@@ -72,7 +70,12 @@ class IntenoFlowHandler(ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_USERNAME): str,
                     vol.Required(CONF_PASSWORD): str,
                     vol.Optional(CONF_VERIFY_SSL, default=False): bool,
-                    vol.Optional(CONF_SCAN_INTERVAL, default=60): int,
+                    vol.Optional(
+                        CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL.seconds
+                    ): int,
+                    vol.Optional(
+                        CONF_DETECTION_TIME, default=DEFAULT_DETECTION_TIME
+                    ): int,
                 }
             ),
             errors=errors,
@@ -132,7 +135,10 @@ class IntenoOptionsFlowHandler(OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
 
         options = {
-            vol.Optional(CONF_SCAN_INTERVAL, default=60): int,
+            vol.Optional(
+                CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL.seconds
+            ): int,
+            vol.Optional(CONF_DETECTION_TIME, default=DEFAULT_DETECTION_TIME): int,
         }
 
         return self.async_show_form(

@@ -8,8 +8,6 @@ from typing import TYPE_CHECKING, Any
 from homeassistant.util import dt as dt_util
 from homeassistant.util import slugify
 
-from .const import ATTR_DEVICE_TRACKER
-
 if TYPE_CHECKING:
     from datetime import datetime
 
@@ -50,9 +48,8 @@ class Device:
     def attrs(self) -> dict[str, Any]:
         """Return device attributes."""
         attr_data = asdict(self._params)
-        for attr in ATTR_DEVICE_TRACKER:
-            if attr in attr_data:
-                self._attrs[slugify(attr)] = attr_data[attr]
+        for attr in attr_data:
+            self._attrs[slugify(attr)] = attr_data[attr]
         return self._attrs
 
     def mark_seen(self) -> None:

@@ -34,9 +34,6 @@
     "step": {
       "device_tracker": {
         "data": {
-          "arp_ping": "Enable ARP ping",
-          "force_dhcp": "Force scanning using DHCP",
-          "detection_time": "Consider home interval"
         }
       }
     }
