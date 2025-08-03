@@ -8,8 +8,9 @@
           "host": "[%key:common::config_flow::data::host%]",
           "username": "[%key:common::config_flow::data::username%]",
           "password": "[%key:common::config_flow::data::password%]",
-          "port": "[%key:common::config_flow::data::port%]",
-          "verify_ssl": "[%key:common::config_flow::data::ssl%]"
+          "verify_ssl": "[%key:common::config_flow::data::ssl%]",
+          "detection_time": "Delay until marking devices as away"
+          "update_interval": "[%key:common::config_flow::data::update_interval%]"
         }
       },
       "reauth_confirm": {
@@ -34,6 +35,8 @@
     "step": {
       "device_tracker": {
         "data": {
+          "detection_time": "Delay until marking devices as away",
+          "update_interval": "[%key:common::config_flow::data::update_interval%]"
         }
       }
     }

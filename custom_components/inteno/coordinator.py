@@ -132,7 +132,7 @@ class IntenoDataUpdateCoordinator(DataUpdateCoordinator[None]):
 
     async def _async_update_data(self) -> None:
         """Update Inteno devices information."""
-        await self._mk_data.update_devices()
+        await self.api.update_devices()
 
 
 async def get_api(entry: dict[str, Any]) -> pyinteno.Inteno:
