@@ -4,13 +4,16 @@
       "user": {
         "title": "Set up Inteno Router",
         "data": {
-          "name": "[%key:common::config_flow::data::name%]",
-          "host": "[%key:common::config_flow::data::host%]",
-          "username": "[%key:common::config_flow::data::username%]",
-          "password": "[%key:common::config_flow::data::password%]",
-          "verify_ssl": "[%key:common::config_flow::data::ssl%]",
-          "detection_time": "Delay until marking devices as away"
-          "update_interval": "[%key:common::config_flow::data::update_interval%]"
+          "host": "Host",
+          "username": "Username",
+          "password": "Password",
+          "verify_ssl": "Verify SSL",
+          "detection_time": "Detection time",
+          "scan_interval": "Update interval"
+        },
+        "data_description": {
+          "ssl": "Whether to verify the SSL certificate of the router.",
+          "detection_time": "Delay until marking devices as away after they are no longer connected."
         }
       },
       "reauth_confirm": {
@@ -35,8 +38,11 @@
     "step": {
       "device_tracker": {
         "data": {
-          "detection_time": "Delay until marking devices as away",
-          "update_interval": "[%key:common::config_flow::data::update_interval%]"
+          "detection_time": "Detection time",
+          "scan_interval": "Update interval"
+        },
+        "data_description": {
+          "detection_time": "Delay until marking devices as away after they are no longer connected."
         }
       }
     }
