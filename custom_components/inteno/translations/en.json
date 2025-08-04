@@ -12,7 +12,7 @@
           "scan_interval": "Update interval"
         },
         "data_description": {
-          "ssl": "Whether to verify the SSL certificate of the router.",
+          "verify_ssl": "Whether to verify the SSL certificate of the router.",
           "detection_time": "Delay until marking devices as away after they are no longer connected."
         }
       },
