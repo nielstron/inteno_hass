@@ -1,10 +1,10 @@
-# Integration for Inteno Internet Routers
+# Integration for Inteno / Genexis Internet Routers
 
 [![Version](https://img.shields.io/badge/version-0.1.1-blue.svg)](https://github.com/nielstron/inteno_hass)
 [![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-This package provides a HACS compatible integration for Inteno Internet Routers into Home Assistant.
+This package provides a HACS compatible integration for [Inteno / Genexis](https://genexis.eu/product/) Internet Routers into Home Assistant.
 
 # Installation
 This integration is available in the [Home Assistant Community Store (HACS)](https://hacs.xyz/). Add this repository to install it from there.
